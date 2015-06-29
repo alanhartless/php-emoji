@@ -1,10 +1,11 @@
+
     /*
      * Perform necessary instantiation functions
      */
     public function __construct()
     {
         // array flip the keys for html unified
-        $this->map['eomji_maps']['html_to_unified'] = array_flip($this->map['unified_to_html']);
+        $this->map['html_to_unified'] = array_flip($this->map['unified_to_html']);
     }
 
     /*

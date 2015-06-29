@@ -37,20 +37,19 @@ namespace Mautic\AddonBundle\Helper;
  */
 class EmojiHelper
 {
-    /*
-     * Map of unicode characters
+    /**
+     * @var array Map of unicode
      */
-     public \$map = array(
+    public \$map = array(
+        'names' => array(
 
 PHP;
-
-	echo "\t\t'names' => array(\n";
 
 	foreach ($maps['names'] as $k => $v){
 
 		$key_enc = format_string($k);
 		$name_enc = "'".AddSlashes($v)."'";
-		echo "\t\t\t$key_enc => $name_enc,\n";
+		echo "            $key_enc => $name_enc,\n";
 	}
 
 	echo "\t\t),\n";
@@ -59,20 +58,17 @@ PHP;
 
 		if ($k == 'names') continue;
 
-		echo "\t\t'$k' => array(\n";
-
-		$count = 0;
-		echo "\t\t\t";
+		echo "        '$k' => array(";
 		foreach ($v as $k2 => $v2){
-			echo "\n\t\t\t";
+			echo "\n            ";
 			echo format_string($k2).'=>'.format_string($v2).', ';
 		}
 		echo "\n";
 
-		echo "\t\t),\n";
+		echo "        ),\n";
 	}
 
-	echo "\t);\n";
+	echo "    );\n";
 
 
 	echo file_get_contents('inc.php');
