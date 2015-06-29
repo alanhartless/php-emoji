@@ -9,23 +9,8 @@
 
 	$maps = array();
 
-	$maps['names']		= make_names_map($catalog);
-	$maps['kaomoji']	= get_all_kaomoji($catalog);
-
-	#fprintf(STDERR, "fix Geta Mark ()  '〓' (U+3013)\n");
-	#$catalog = fix_geta_mark($catalog);
-
-	$maps["unified_to_docomo"]	= make_mapping($catalog, 'docomo');
-	$maps["unified_to_kddi"]	= make_mapping($catalog, 'au');
-	$maps["unified_to_softbank"]	= make_mapping($catalog, 'softbank');
-	$maps["unified_to_google"]	= make_mapping($catalog, 'google');
-
-	$maps["docomo_to_unified"]	= make_mapping_flip($catalog, 'docomo');
-	$maps["kddi_to_unified"]	= make_mapping_flip($catalog, 'au');
-	$maps["softbank_to_unified"]	= make_mapping_flip($catalog, 'softbank');
-	$maps["google_to_unified"]	= make_mapping_flip($catalog, 'google');
-
-	$maps["unified_to_html"]	= make_html_map($catalog);
+	$maps['names']		     = make_names_map($catalog);
+	$maps["unified_to_html"] = make_html_map($catalog);
 
 
 	#
@@ -33,16 +18,31 @@
 	# we could just use var_dump, but we get 'better' output this way
 	#
 
-	echo "<"."?php\n";
+echo <<<PHP
+<?php
+/**
+ * @package     Mautic
+ * @copyright   2014 Mautic Contributors. All rights reserved.
+ * @author      Mautic
+ * @link        http://mautic.org
+ * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ */
 
-	echo "\n";
-	echo "\t#\n";
-	echo "\t# WARNING:\n";
-	echo "\t# This code is auto-generated. Do not modify it manually.\n";
-	echo "\t#\n";
-	echo "\n";
+namespace Mautic\AddonBundle\Helper;
 
-	echo "\t\$GLOBALS['emoji_maps'] = array(\n";
+/**
+ * Helper class for Emoji unicodes
+ *
+ * Build from modified https://github.com/iamcal/php-emoji
+ */
+class EmojiHelper
+{
+    /*
+     * Map of unicode characters
+     */
+     public \$map = array(
+
+PHP;
 
 	echo "\t\t'names' => array(\n";
 
@@ -64,8 +64,7 @@
 		$count = 0;
 		echo "\t\t\t";
 		foreach ($v as $k2 => $v2){
-			$count++;
-			if ($count % 5 == 0) echo "\n\t\t\t";
+			echo "\n\t\t\t";
 			echo format_string($k2).'=>'.format_string($v2).', ';
 		}
 		echo "\n";
@@ -79,28 +78,7 @@
 	echo file_get_contents('inc.php');
 
 
-
 	##########################################################################################
-
-	function get_all_kaomoji($mapping){
-		$arr = array();
-
-		foreach ($mapping as $map){
-			if (isset($map['docomo']['kaomoji']) ) {
-				$arr[ $map['docomo']['kaomoji'] ] = '1';
-			}
-
-			if (isset($map['au']['kaomoji']) ) {
-				$arr[ $map['au']['kaomoji'] ] = '1';
-			}
-
-			if (isset($map['softbank']['kaomoji']) ) {
-				$arr[ $map['softbank']['kaomoji'] ] = '1';
-			}
-		}
-
-		return array_keys($arr);
-	}
 
 	function make_names_map($map){
 
@@ -205,15 +183,15 @@
 	}
 
 	function format_string($s){
-		$out = ''; 
+		$out = '';
 		for ($i=0; $i<strlen($s); $i++){
 			$c = ord(substr($s,$i,1));
 			if ($c >= 0x20 && $c < 0x80 && !in_array($c, array(34, 39, 92))){
 				$out .= chr($c);
 			}else{
 				$out .= sprintf('\\x%02x', $c);
-			}   
-		}   
+			}
+		}
 		return '"'.$out.'"';
-	}   
+	}
 
