@@ -38,23 +38,10 @@ class EmojiHelper
      * @var array Map of unicode
      */
     public \$map = array(
-        'names' => array(
 
 PHP;
 
-	foreach ($maps['names'] as $k => $v){
-
-		$key_enc = format_string($k);
-		$name_enc = "'".AddSlashes($v)."'";
-		echo "            $key_enc => $name_enc,\n";
-	}
-
-	echo "\t\t),\n";
-
 	foreach ($maps as $k => $v){
-
-		if ($k == 'names') continue;
-
 		echo "        '$k' => array(";
 		foreach ($v as $k2 => $v2){
 			echo "\n            ";
@@ -76,14 +63,16 @@ PHP;
 
 		$out = array();
 		foreach ($map as $row){
-
-			$hex = unicode_hex_chars($row['unified']);
-			$bytes = unicode_bytes($row['unified']);
-
+			$hex         = unicode_hex_chars($row['unified']);
+			$bytes       = unicode_bytes($row['unified']);
+            $googleBytes = unicode_bytes($row['google']);
 			$out[$bytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+            if ($googleBytes != $bytes) {
+                $out[$googleBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+            }
 		}
 
-        include __DIR__ . '/custom_emoji.php';
+        //include __DIR__ . '/custom_emoji.php';
 
 		return $out;
 	}
