@@ -31,12 +31,4 @@
     {
         return str_replace(array_keys($this->map[$map]), $this->map[$map], $text);
     }
-
-    /*
-     * Emoji Get Name
-     */
-    function emoji_get_name($unified_cp)
-    {
-        return $this->map['names'][$unified_cp] ? $this->map['names'][$unified_cp] : '?';
-    }
 }

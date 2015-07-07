@@ -14,7 +14,7 @@ span.emoji-outer {
 }
 
 span.emoji-inner {
-	background: url(emoji.png);
+	background: url(../img/emoji.png);
 	background-size: 3000% !important;
 	display: -moz-inline-box;
 	display: inline-block;

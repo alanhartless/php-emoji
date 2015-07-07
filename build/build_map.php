@@ -2,14 +2,11 @@
 	$in = file_get_contents('emoji-data/emoji.json');
 	$catalog = json_decode($in, true);
 
-
 	#
 	# build the final maps
 	#
 
 	$maps = array();
-
-	$maps['names']		     = make_names_map($catalog);
 	$maps["unified_to_html"] = make_html_map($catalog);
 
 
@@ -75,20 +72,6 @@ PHP;
 
 
 	##########################################################################################
-
-	function make_names_map($map){
-
-		$out = array();
-		foreach ($map as $row){
-
-			$bytes = unicode_bytes($row['unified']);
-
-			$out[$bytes] = $row['name'];
-		}
-
-		return $out;
-	}
-
 	function make_html_map($map){
 
 		$out = array();
@@ -99,6 +82,8 @@ PHP;
 
 			$out[$bytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
 		}
+
+        include __DIR__ . '/custom_emoji.php';
 
 		return $out;
 	}
