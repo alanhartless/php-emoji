@@ -6,9 +6,10 @@
 	# build the final maps
 	#
 
-	$maps = array();
-	$maps["unified_to_html"] = make_html_map($catalog);
-
+    $maps = array_merge(
+        make_html_map($catalog),
+        make_shortname_map($catalog)
+    );
 
 	#
 	# output
@@ -25,7 +26,7 @@ echo <<<PHP
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-namespace Mautic\AddonBundle\Helper;
+namespace Mautic\CoreBundle\Helper;
 
 /**
  * Helper class for Emoji unicodes
@@ -37,7 +38,7 @@ class EmojiHelper
     /**
      * @var array Map of unicode
      */
-    public \$map = array(
+    private static \$map = array(
 
 PHP;
 
@@ -59,23 +60,108 @@ PHP;
 
 
 	##########################################################################################
-	function make_html_map($map){
+	function make_html_map($map)
+    {
+        $html    = array();
+        $unified = array();
+        foreach ($map as $row) {
+            $hex                                                                                         = unicode_hex_chars($row['unified']);
+            $bytes                                                                                       = unicode_bytes($row['unified']);
+            $html[$bytes]                                                                                = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+            $unified["<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>"] = $bytes;
 
-		$out = array();
-		foreach ($map as $row){
-			$hex         = unicode_hex_chars($row['unified']);
-			$bytes       = unicode_bytes($row['unified']);
-            $googleBytes = unicode_bytes($row['google']);
-			$out[$bytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
-            if ($googleBytes != $bytes) {
-                $out[$googleBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+            if ($row['google']) {
+                $googleBytes = unicode_bytes($row['google']);
+                if ($googleBytes != $bytes) {
+                    $html[$googleBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                }
             }
-		}
+            if ($row['docomo']) {
+                $docomoBytes = unicode_bytes($row['docomo']);
+                if ($docomoBytes != $bytes) {
+                    $html[$docomoBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                }
+            }
+            if ($row['softbank']) {
+                $softbankBytes = unicode_bytes($row['softbank']);
+                if ($softbankBytes != $bytes) {
+                    $html[$softbankBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                }
+            }
+            if ($row['au']) {
+                $auBytes = unicode_bytes($row['au']);
+                if ($auBytes != $bytes) {
+                    $html[$auBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                }
+            }
+            if (count($row['variations'])) {
+                foreach ($row['variations'] as $variation) {
+                    $variationBytes = unicode_bytes($variation);
+                    if ($variationBytes != $bytes) {
+                        $html[$variationBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                    }
+                }
+            }
+        }
 
-        //include __DIR__ . '/custom_emoji.php';
+        return array(
+            'emoji_to_html' => $html,
+            'html_to_emoji' => $unified
+        );
+    }
 
-		return $out;
-	}
+    function make_shortname_map($map)
+    {
+        $short   = array();
+        $unified = array();
+
+        foreach ($map as $row) {
+            foreach ($row['short_names'] as $name) {
+                $name           = ":$name:";
+                $bytes          = unicode_bytes($row['unified']);
+                $short[$bytes]  = $name;
+                $unified[$name] = $bytes;
+
+                if ($row['google']) {
+                    $googleBytes = unicode_bytes($row['google']);
+                    if ($googleBytes != $bytes) {
+                        $short[$googleBytes] = $name;
+                    }
+                }
+                if ($row['docomo']) {
+                    $docomoBytes = unicode_bytes($row['docomo']);
+                    if ($docomoBytes != $bytes) {
+                        $short[$docomoBytes] = $name;
+                    }
+                }
+                if ($row['softbank']) {
+                    $softbankBytes = unicode_bytes($row['softbank']);
+                    if ($softbankBytes != $bytes) {
+                        $short[$softbankBytes] = $name;
+                    }
+                }
+                if ($row['au']) {
+                    $auBytes = unicode_bytes($row['au']);
+                    if ($auBytes != $bytes) {
+                        $short[$auBytes] = $name;
+                    }
+                }
+                if (count($row['variations'])) {
+                    foreach ($row['variations'] as $variation) {
+                        $variationBytes = unicode_bytes($variation);
+                        if ($variationBytes != $bytes) {
+                            $short[$variationBytes] = $name;
+                        }
+                    }
+                }
+            }
+        }
+
+        return array(
+            'emoji_to_short' => $short,
+            'short_to_emoji' => $unified
+        );
+    }
 
 	function make_mapping($mapping, $dest){
 
