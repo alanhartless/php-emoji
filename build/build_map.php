@@ -48,7 +48,6 @@ PHP;
 			echo "\n            ";
 			echo format_string($k2).'=>'.format_string($v2).', ';
 		}
-		echo "\n";
 
 		echo "        ),\n";
 	}
@@ -65,40 +64,40 @@ PHP;
         $html    = array();
         $unified = array();
         foreach ($map as $row) {
-            $hex                                                                                         = unicode_hex_chars($row['unified']);
-            $bytes                                                                                       = unicode_bytes($row['unified']);
-            $html[$bytes]                                                                                = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
-            $unified["<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>"] = $bytes;
+            $hex                     = unicode_hex_chars($row['unified']);
+            $bytes                   = unicode_bytes($row['unified']);
+            $html[$bytes]            = "<span class=\"emoji-outer emoji-sizer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+            $unified[$html[$bytes]]  = $bytes;
 
             if ($row['google']) {
                 $googleBytes = unicode_bytes($row['google']);
                 if ($googleBytes != $bytes) {
-                    $html[$googleBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                    $html[$googleBytes] = $html[$bytes];
                 }
             }
             if ($row['docomo']) {
                 $docomoBytes = unicode_bytes($row['docomo']);
                 if ($docomoBytes != $bytes) {
-                    $html[$docomoBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                    $html[$docomoBytes] = $html[$bytes];
                 }
             }
             if ($row['softbank']) {
                 $softbankBytes = unicode_bytes($row['softbank']);
                 if ($softbankBytes != $bytes) {
-                    $html[$softbankBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                    $html[$softbankBytes] = $html[$bytes];
                 }
             }
             if ($row['au']) {
                 $auBytes = unicode_bytes($row['au']);
                 if ($auBytes != $bytes) {
-                    $html[$auBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                    $html[$auBytes] = $html[$bytes];
                 }
             }
             if (count($row['variations'])) {
                 foreach ($row['variations'] as $variation) {
                     $variationBytes = unicode_bytes($variation);
                     if ($variationBytes != $bytes) {
-                        $html[$variationBytes] = "<span class=\"emoji-outer\"><span class=\"emoji-inner emoji$hex\"></span></span>";
+                        $html[$variationBytes] = $html[$bytes];
                     }
                 }
             }
